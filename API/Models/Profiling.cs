@@ -10,4 +10,8 @@ public class Profiling
     public string EmployeeNIK { get; set; }
     [Column("education_id")]
     public int EducationId { get; set; }
+
+    // Cardinality
+    public Education Education { get; set; }
+    public Employee Employee { get; set; }
 }

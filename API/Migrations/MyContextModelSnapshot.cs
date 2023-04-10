@@ -58,6 +58,10 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountNIK");
+
+                    b.HasIndex("RoleId");
+
                     b.ToTable("tb_tr_account_roles");
                 });
 
@@ -90,6 +94,8 @@ namespace API.Migrations
                         .HasColumnName("university_id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UniversityId");
 
                     b.ToTable("tb_m_educations");
                 });
@@ -148,6 +154,9 @@ namespace API.Migrations
 
                     b.HasKey("EmployeeNIK");
 
+                    b.HasIndex("EducationId")
+                        .IsUnique();
+
                     b.ToTable("tb_tr_profilings");
                 });
 
@@ -187,6 +196,96 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tb_m_universities");
+                });
+
+            modelBuilder.Entity("API.Models.Account", b =>
+                {
+                    b.HasOne("API.Models.Employee", "Employee")
+                        .WithOne("Account")
+                        .HasForeignKey("API.Models.Account", "EmployeeNIK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("API.Models.AccountRole", b =>
+                {
+                    b.HasOne("API.Models.Account", "Account")
+                        .WithMany("AccountRoles")
+                        .HasForeignKey("AccountNIK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Role", "Role")
+                        .WithMany("AccountRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("API.Models.Education", b =>
+                {
+                    b.HasOne("API.Models.University", "University")
+                        .WithMany("Educations")
+                        .HasForeignKey("UniversityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("University");
+                });
+
+            modelBuilder.Entity("API.Models.Profiling", b =>
+                {
+                    b.HasOne("API.Models.Education", "Education")
+                        .WithOne("Profiling")
+                        .HasForeignKey("API.Models.Profiling", "EducationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Employee", "Employee")
+                        .WithOne("Profiling")
+                        .HasForeignKey("API.Models.Profiling", "EmployeeNIK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Education");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("API.Models.Account", b =>
+                {
+                    b.Navigation("AccountRoles");
+                });
+
+            modelBuilder.Entity("API.Models.Education", b =>
+                {
+                    b.Navigation("Profiling")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Models.Employee", b =>
+                {
+                    b.Navigation("Account")
+                        .IsRequired();
+
+                    b.Navigation("Profiling")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("API.Models.Role", b =>
+                {
+                    b.Navigation("AccountRoles");
+                });
+
+            modelBuilder.Entity("API.Models.University", b =>
+                {
+                    b.Navigation("Educations");
                 });
 #pragma warning restore 612, 618
         }

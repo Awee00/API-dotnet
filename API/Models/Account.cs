@@ -10,4 +10,8 @@ public class Account
     public string EmployeeNIK { get; set; }
     [Column("password", TypeName = "varchar(255)")]
     public string Password { get; set; }
+
+    // Cardinality
+    public Employee Employee { get; set; }
+    public ICollection<AccountRole> AccountRoles { get; set; }
 }

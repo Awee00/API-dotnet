@@ -10,4 +10,7 @@ public class Role
     public int Id { get; set; }
     [Column("name", TypeName = "varchar(50)")]
     public string Name { get; set; }
+
+    // Cardinality
+    public ICollection<AccountRole> AccountRoles { get; set; }
 }
