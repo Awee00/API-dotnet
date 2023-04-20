@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Models;
 
@@ -24,8 +25,10 @@ public class Employee
     public string PhoneNumber { get; set; }
 
     // Cardinality
-    public Profiling Profiling { get; set; }
-    public Account Account { get; set; }
+    [JsonIgnore]
+    public Profiling? Profiling { get; set; }
+    [JsonIgnore]
+    public Account? Account { get; set; }
 }
 public enum Gender
 {

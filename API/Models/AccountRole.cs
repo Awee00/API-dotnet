@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Models;
 
@@ -14,6 +15,8 @@ public class AccountRole
     public int RoleId { get; set;}
 
     // Cardinality
-    public Account Account { get; set; }
-    public Role Role { get; set; }
+    [JsonIgnore]
+    public Account? Account { get; set; }
+    [JsonIgnore]
+    public Role? Role { get; set; }
 }
