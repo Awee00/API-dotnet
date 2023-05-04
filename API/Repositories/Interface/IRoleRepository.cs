@@ -2,11 +2,7 @@
 
 namespace API.Repositories.Interface;
 
-public interface IRoleRepository
+public interface IRoleRepository : IGeneralRepository<Role, int>
 {
-    IEnumerable<Role> GetAll();
-    Role? GetById(int id);
-    int Insert(Role role);
-    int Update(Role role);
-    int Delete(int id);
+
 }

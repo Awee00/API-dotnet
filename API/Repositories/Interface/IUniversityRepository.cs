@@ -2,11 +2,7 @@
 
 namespace API.Repositories.Interface;
 
-public interface IUniversityRepository
+public interface IUniversityRepository : IGeneralRepository<University, int>
 {
-    IEnumerable<University> GetAll();
-    University? GetById(int id);
-    int Insert(University university);
-    int Update(University university);
-    int Delete(int id);
+
 }
