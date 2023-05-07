@@ -51,7 +51,7 @@ public class AccountRepository : GeneralRepository<Account, string, MyContext>, 
         var account = new Account
         {
             EmployeeNIK = registerVM.NIK,
-            Password = registerVM.Password
+            Password = Hashing.HashPassword(registerVM.Password)
         };
         _context.Set<Account>().Add(account);
         result += _context.SaveChanges();
