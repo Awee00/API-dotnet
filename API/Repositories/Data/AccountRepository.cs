@@ -1,4 +1,5 @@
 ﻿using API.Context;
+using API.Handlers;
 using API.Models;
 using API.Repositories.Interface;
 using API.ViewModels;
@@ -83,16 +84,19 @@ public class AccountRepository : GeneralRepository<Account, string, MyContext>, 
         // cocokan data tersebut dengan password yang diinputkan
         // cek apakah data falid atau tidak
 
-        var result = false;
-        var data = _context.Accounts.Where(a => a.Employee.Email == loginVM.Email).FirstOrDefault();
-
-        if (data != null)
-        {
-            if (loginVM.Password, data.Password)
+        var getEmployeeAccount = _context.Employees.Join(_context.Accounts,
+            e => e.NIK,
+            a => a.EmployeeNIK,
+            (e, a) => new
             {
-                result = true;
-            }
+                Email = e.Email,
+                Password = a.Password
+            }).FirstOrDefault(e => e.Email == loginVM.Email);
+        if (getEmployeeAccount == null)
+        {
+            return false;
         }
-        return result;
+
+        return Hashing.ValidatePassword(loginVM.Password, getEmployeeAccount.Password);
     }
 }

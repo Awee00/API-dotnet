@@ -7,5 +7,5 @@ public interface IAccountRepository : IGeneralRepository<Account, string>
 {
     int Register(RegisterVM registerVM);
 
-    bool Login(LoginVM loginVM)
+    bool Login(LoginVM loginVM);
 }
