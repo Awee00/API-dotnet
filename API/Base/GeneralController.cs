@@ -1,5 +1,6 @@
 ﻿using API.Repositories;
 using API.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -7,6 +8,7 @@ namespace API.Base;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize] // Anotasi Authorize digunakan untuk menandakan bahwa controller ini hanya bisa diakses oleh user yang sudah login
 public class GeneralController<TRepository, TEntity, TKey> : ControllerBase
     where TRepository : IGeneralRepository<TEntity, TKey>
 {

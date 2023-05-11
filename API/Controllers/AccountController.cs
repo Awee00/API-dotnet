@@ -1,39 +1,72 @@
 ﻿using API.Base;
+using API.Handlers;
 using API.Models;
 using API.Repositories.Interface;
 using API.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace API.Controllers;
-
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Roles = "admin")]
 public class AccountController : GeneralController<IAccountRepository, Account, string>
 {
-    public AccountController(IAccountRepository repository) : base(repository) { }
+    private readonly ITokenService _tokenService;
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IAccountRoleRepository _accountRoleRepository;
 
+    public AccountController(
+        IAccountRepository repository,
+        ITokenService tokenService,
+        IEmployeeRepository employeeRepository,
+        IAccountRoleRepository accountRoleRepository) : base(repository)
+    {
+        _tokenService = tokenService;
+        _employeeRepository = employeeRepository;
+        _accountRoleRepository = accountRoleRepository;
+    }
+
+    [AllowAnonymous]
     [HttpPost("Login")]
     public ActionResult Login(LoginVM loginVM)
     {
         var login = _repository.Login(loginVM);
-        if (login)
+        if (!login)
         {
-            return Ok(new ResponseDataVM<Account>
+            return NotFound(new ResponseErrorsVM<string>
             {
-                Code = StatusCodes.Status200OK,
-                Status = HttpStatusCode.OK.ToString(),
-                Message = "Login Success"
+                Code = StatusCodes.Status404NotFound,
+                Status = HttpStatusCode.NotFound.ToString(),
+                Errors = "Login Failed, Account or Password Not Found!"
             });
         }
-        return NotFound(new ResponseErrorsVM<string>
+
+        var claims = new List<Claim>() {
+            new Claim("Email", loginVM.Email),
+            new Claim("FullName", _employeeRepository.GetFullNameByEmail(loginVM.Email))
+        };
+
+        var getRoles = _accountRoleRepository.GetRolesByEmail(loginVM.Email);
+        foreach (var role in getRoles)
         {
-            Code = StatusCodes.Status404NotFound,
-            Status = HttpStatusCode.NotFound.ToString(),
-            Errors = "Login failed"
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var token = _tokenService.GenerateToken(claims);
+
+        return Ok(new ResponseDataVM<string>
+        {
+            Code = StatusCodes.Status200OK,
+            Status = HttpStatusCode.OK.ToString(),
+            Message = "Login Success",
+            Data = token
         });
     }
 
+    [AllowAnonymous]
     [HttpPost("Register")]
     public ActionResult Register(RegisterVM registerVM)
     {
@@ -47,6 +80,7 @@ public class AccountController : GeneralController<IAccountRepository, Account, 
                 Message = "Insert Success"
             });
         }
+
         return BadRequest(new ResponseErrorsVM<string>
         {
             Code = StatusCodes.Status500InternalServerError,
