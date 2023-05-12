@@ -27,6 +27,25 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountRoleRepository, AccountRoleRepository>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin();
+        policy.AllowAnyMethod();
+        //policy.WithMethods("GET", "POST", "PUT", "DELETE");
+        policy.AllowAnyHeader();
+
+    });
+    //options.AddPolicy("AnotherPolicy", policy =>
+    //{
+    //    policy.WithOrigins("http://localhost:3000");
+    //    policy.WithMethods("GET");
+    //    policy.AllowAnyHeader();
+    //});
+});
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -60,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication();
 

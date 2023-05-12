@@ -1,0 +1,26 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "TestCors";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ViewData["Title"] - Client</title>
+</head>
+<body>
+    <h1>TestCors</h1>
+
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/values"
+        }).done((result) => {
+            console.log(result);
+        });
+    </script>
+</body>
+</html>
