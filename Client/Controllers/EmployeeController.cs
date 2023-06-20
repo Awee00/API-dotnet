@@ -1,9 +1,10 @@
 ﻿using API.Models;
 using Client.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers;
-
+[Authorize]
 public class EmployeeController : Controller
 {
     private readonly EmployeeRepository repository;
